@@ -1,1 +1,4 @@
-# CS221_Project
+# CS221 - Project
+
+## Part 1: Text Processing
+
