@@ -10,7 +10,6 @@ class MyTokenizer:
             # r"(?=\w+[^@]\w+)",  # non-separator
             r' ',  # spaces
             r'\n'  # New line
-
         ]
         self.regex = '|'.join(self.token_spec)
 
