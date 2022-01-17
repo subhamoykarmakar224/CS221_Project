@@ -14,9 +14,15 @@ class MyTokenizer:
         ]
         self.regex = '|'.join(self.token_spec)
 
-    def my_tokenizer(self, s: str):
-        res = re.split(self.regex, s, flags=re.I | re.M | re.MULTILINE)
-        return res  # TODO: add to dictionary of count of token
+    def my_tokenizer(self, s: str, token_word_count: dict):
+        res_token = dict()
+        res = re.split(self.regex, s.lower(), flags=re.I | re.M | re.MULTILINE)
+        for r in res:
+            if r not in token_word_count:
+                token_word_count[r] = 0
+            token_word_count[r] += 1
+
+        # return res_token  # TODO: add to dictionary of count of token
 
 
 # TODO :: DELETE :: Tokenizer local tester

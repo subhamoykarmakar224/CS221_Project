@@ -12,9 +12,9 @@ class Controller:
         self.my_tokenizer = MyTokenizer()
 
     def controller(self):
-        self.read_file()
+        self.start_job_executor()
 
-    def read_file(self):
+    def start_job_executor(self):
         stream_processor_mthreads(
             self.file_read.file_read_chunks(),
             self.my_tokenizer.my_tokenizer,
