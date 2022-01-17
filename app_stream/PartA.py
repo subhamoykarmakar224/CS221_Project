@@ -1,7 +1,7 @@
 import multiprocessing
 import time
-from app_stream.filehandle import *
-from app_stream.jobpool import JobStreamer
+from app_stream.jobpool.JobStreamer import JobStreamer
+from app_stream.filehandle.FileRead import FileRead
 from utils import Constants
 
 

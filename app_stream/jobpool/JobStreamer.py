@@ -5,7 +5,7 @@ import signal
 import sys
 from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED, ProcessPoolExecutor
 
-from JobBuffer import *
+from app_stream.jobpool.JobBuffer import JobBuffer
 
 
 class JobStreamer():
