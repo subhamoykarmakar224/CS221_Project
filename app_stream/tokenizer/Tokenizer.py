@@ -19,6 +19,7 @@ class MyTokenizer:
         return res  # TODO: add to dictionary of count of token
 
 
+# TODO :: DELETE :: Tokenizer local tester
 # if __name__ == '__main__':
 #     m = MyTokenizer()
 #     m.my_tokenizer("info@com! it's a great day.")  # ['info@com', '!', "it's", 'a', 'great', 'day']

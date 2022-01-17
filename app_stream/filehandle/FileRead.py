@@ -13,14 +13,12 @@ class FileRead:
                 last_space = chunk.rfind(' ')
                 curr_chunk = left_out_str + chunk[:last_space]
                 left_out_str = chunk[last_space:]
-                # self.send_to_tokenizer_pool(curr_chunk)
                 # TODO :: Delete bottom part of the code later
                 cnt += 1
-                if cnt == 3:
+                if cnt == 5:
                     break
                 print("------------")
-                # TODO :: Send for Tokenizer
-                # self.send_to_tokenizer(curr_chunk)
+                # TODO :: Delete part of the code
                 yield curr_chunk
 
     def file_read_chunks_mps(self):

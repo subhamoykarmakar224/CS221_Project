@@ -1,10 +1,9 @@
 import logging
 import multiprocessing
-from multiprocessing import Queue
-# import queue
+from multiprocessing import Queue, Manager
 import signal
 import sys
-from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED, ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED, ProcessPoolExecutor
 
 from app_stream.jobpool.JobBuffer import JobBuffer
 
@@ -16,7 +15,7 @@ handler.setLevel(level)
 log.addHandler(handler)
 log.setLevel(level)
 
-WAIT_SLEEP = 1  # second, adjust this based on the timescale of your tasks
+WAIT_SLEEP = 2  # second, adjust this based on the timescale of your tasks
 
 
 def stream_processor_mthreads(input_stream, task, num_workers=multiprocessing.cpu_count()):
@@ -53,18 +52,17 @@ def stream_processor_mthreads(input_stream, task, num_workers=multiprocessing.cp
                 for data in items:
                     futures[executor.submit(task, data)] = data
 
-            done, _ = wait(futures, timeout=WAIT_SLEEP, return_when=ALL_COMPLETED)
+            done, _ = wait(futures, timeout=WAIT_SLEEP, return_when=FIRST_COMPLETED)
             for f in done:
                 data = futures[f]
                 try:
-                    f.result(timeout=0)
+                    res_token = f.result(timeout=0)
                 except Exception as exc:
                     log.error('future encountered an exception: %r, %s' % (data, exc))
                     num_failure += 1
                 else:
-                    log.info('future finished successfully: %r' % data)
+                    log.info('future finished successfully: %r' % res_token)
                     num_success += 1
-
                 del futures[f]
 
             if is_shutting_down() and len(futures) == 0:
@@ -107,7 +105,8 @@ def stream_processor_mprocessor(input_stream, task, num_workers=multiprocessing.
                 for data in items:
                     futures[executor.submit(task, data)] = data
 
-            done, _ = wait(futures, timeout=WAIT_SLEEP, return_when=ALL_COMPLETED)
+            done, _ = wait(futures, timeout=WAIT_SLEEP, return_when=FIRST_COMPLETED)
+            print('==> ', done)
             for f in done:
                 data = futures[f]
                 try:
