@@ -19,7 +19,6 @@ class FileRead:
                 curr_chunk = left_out_str + chunk[:last_space]
                 left_out_str = chunk[last_space:]
                 # TODO :: Send for Tokenizer
-                # print(curr_chunk)
                 self.send_to_tokenizer(curr_chunk)
                 # self.send_to_tokenizer_pool(curr_chunk)
                 # TODO :: Delete bottom part of the code later
@@ -28,30 +27,31 @@ class FileRead:
                     break
                 print("------------")
 
-        self.pool_cleanup()
+        # self.pool_cleanup()
 
     def send_to_tokenizer(self, s):
-        self.tokenizer.my_tokenizer(s)
+        tokens = self.tokenizer.my_tokenizer(s)
+        print(tokens)
 
-    def send_to_tokenizer_pool(self, s):
-        print('s:: ', s)
-        self.pool.apply(self.tokenizer.my_tokenizer, s)
-
-    def pool_cleanup(self):
-        self.pool.close()
-        self.pool.join()
-
-    def file_read_line_chunks(self):
-        cnt = 0
-        with open(self.file_uri) as f:
-            while text := f.readline():
-                print(text)
-                cnt += 1
-                if cnt == 4:
-                    break
-
-    def file_read_multi_ps(self):
-        pass
+    # def send_to_tokenizer_pool(self, s):
+    #     print('s:: ', s)
+    #     self.pool.apply(self.tokenizer.my_tokenizer, s)
+    #
+    # def pool_cleanup(self):
+    #     self.pool.close()
+    #     self.pool.join()
+    #
+    # def file_read_line_chunks(self):
+    #     cnt = 0
+    #     with open(self.file_uri) as f:
+    #         while text := f.readline():
+    #             print(text)
+    #             cnt += 1
+    #             if cnt == 4:
+    #                 break
+    #
+    # def file_read_multi_ps(self):
+    #     pass
 
 """
 Symbol,Company Name,Security Name,Market Category,Test Issue,Financial Status,Round Lot Size

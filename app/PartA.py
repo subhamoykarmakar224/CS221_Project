@@ -25,4 +25,3 @@ if __name__ == '__main__':
     t = Controller(file_name)
     t.controller()
     print("Exec time --- %s seconds ---" % (time.time() - start_time))
-
