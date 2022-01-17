@@ -1,23 +1,23 @@
-import multiprocessing
 import time
-from app_stream.jobpool.JobStreamer import JobStreamer
+from app_stream.jobpool.JobStreamer import *
 from app_stream.filehandle.FileRead import FileRead
-from utils import Constants
+from app_stream.tokenizer.Tokenizer import MyTokenizer
+from app_stream.utils import Constants
 
 
 class Controller:
     def __init__(self, file_uri):
         self.file_uri = file_uri
         self.file_read = FileRead(self.file_uri)
-        self.job_pool_control = JobStreamer()
+        self.my_tokenizer = MyTokenizer()
 
     def controller(self):
         self.read_file()
 
     def read_file(self):
-        self.job_pool_control.stream_processor_mprocessor(
+        stream_processor_mthreads(
             self.file_read.file_read_chunks(),
-            self.job_pool_control.stream_processor_mprocessor,
+            self.my_tokenizer.my_tokenizer,
             num_workers=max(multiprocessing.cpu_count(), Constants.N_WORKERS)
         )
 
