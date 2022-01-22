@@ -8,3 +8,5 @@
  - https://docs.python.org/2/library/functions.html#open
  - https://docs.python.org/3/library/re.html
  - https://docs.python.org/3/library/concurrent.futures.html
+ - https://tutorialedge.net/python/concurrency/python-threadpoolexecutor-tutorial/
+ - 

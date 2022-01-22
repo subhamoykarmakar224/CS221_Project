@@ -73,9 +73,13 @@ def stream_processor_mthreads(input_stream, task, num_workers):
                     break
 
             # log.info("num_success=%d, num_failure=%d" % (num_success, num_failure))
-            # TODO :: print the result of word count here
-            token_word_count.pop('')
-            token_word_count = sorted(token_word_count.items(), key=lambda x: x[1], reverse=True)
-            # print(token_word_count)
-            for k, cnt in token_word_count:
-                print(f'%s: %d' % (k, cnt))
+            print_result(token_word_count)
+
+
+def print_result(token_word_count):
+    # TODO :: print the result of word count here
+    # token_word_count.pop('')
+    # token_word_count = sorted(token_word_count.items(), key=lambda x: x[1], reverse=True)
+    print(token_word_count)
+    # for k, cnt in token_word_count:
+    #     print(f'%s: %d' % (k, cnt))
