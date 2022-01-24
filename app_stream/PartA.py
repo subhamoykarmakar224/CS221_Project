@@ -18,7 +18,7 @@ class Controller:
         stream_processor_mthreads(
             self.file_read.file_read_chunks(),
             self.my_tokenizer.my_tokenizer,
-            num_workers=max(multiprocessing.cpu_count(), Constants.N_WORKERS)
+            num_workers=max(multiprocessing.cpu_count() - 2, Constants.N_WORKERS)
         )
 
 
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # file_name = sys.argv[1]
     # print(file_name)
     start_time = time.time()
-    file_name = './res/books/Ulysses.txt'
+    file_name = './res/books/Ulysses_big.txt'
     t = Controller(file_name)
     t.controller()
     print("Exec time --- %s seconds ---" % (time.time() - start_time))

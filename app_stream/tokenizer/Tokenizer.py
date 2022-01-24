@@ -11,9 +11,9 @@ class MyTokenizer:
     def __init__(self):
         # self.regex = r"[.|!|>]|^[@|#|*|&|']| " # partially working
         self.token_spec = [
-            r"(?=!)",
-            r"\s",
-            r"([@|#|*|&|']\s*)"
+            # r"(?=!)",
+            r"\s"
+            # r"([@|#|*|&|']\s*)"
             # r"^[@|#|*|&|']",  # non-separator
             # r"(?=\w+[^@]\w+)",  # non-separator
             # r' ',  # spaces
@@ -34,23 +34,23 @@ class MyTokenizer:
                 token_word_count[k] = 0
             token_word_count[k] += res_token[k]
 
-        print(res_token.keys())
+        # print(res_token.keys())
 
 
-# TODO :: DELETE :: Tokenizer local tester
-if __name__ == '__main__':
-    m = MyTokenizer()
-    m.my_tokenizer("info@com! it's a great day.", dict())  # ['info@com', '!', "it's", 'a', 'great', 'day']
-    m.my_tokenizer("abce>def", dict())  # [‘abcd’, ‘>’, ‘def’]
-    m.my_tokenizer("abce#def", dict())  # [‘abcd#def’]
-    m.my_tokenizer("abce&def", dict())  # [‘abcd&def’]
-    m.my_tokenizer("""This eBook is for the use of anyone anywhere in the United States and
-most other parts of the world at no cost and with almost no restrictions
-whatsoever. You may copy it, give it away or re-use it under the terms
-of the Project Gutenberg License included with this eBook or online at
-www.gutenberg.org. THis is the.""", dict())
-
-"""
-'abce>def'  -> [‘abcd’, ‘>’, ‘def’]
-'info@com! it's a great day' -> ['info@com', '!', "it's", 'a', 'great', 'day']
-"""
+# # TODO :: DELETE :: Tokenizer local tester
+# if __name__ == '__main__':
+#     m = MyTokenizer()
+#     m.my_tokenizer("info@com! it's a great day.", dict())  # ['info@com', '!', "it's", 'a', 'great', 'day']
+#     m.my_tokenizer("abce>def", dict())  # [‘abcd’, ‘>’, ‘def’]
+#     m.my_tokenizer("abce#def", dict())  # [‘abcd#def’]
+#     m.my_tokenizer("abce&def", dict())  # [‘abcd&def’]
+#     m.my_tokenizer("""This eBook is for the use of anyone anywhere in the United States and
+# most other parts of the world at no cost and with almost no restrictions
+# whatsoever. You may copy it, give it away or re-use it under the terms
+# of the Project Gutenberg License included with this eBook or online at
+# www.gutenberg.org. THis is the.""", dict())
+#
+# """
+# 'abce>def'  -> [‘abcd’, ‘>’, ‘def’]
+# 'info@com! it's a great day' -> ['info@com', '!', "it's", 'a', 'great', 'day']
+# """
