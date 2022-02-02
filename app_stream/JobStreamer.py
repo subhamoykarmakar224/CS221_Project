@@ -5,7 +5,7 @@ import signal
 import sys
 from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED, ProcessPoolExecutor
 
-from app_stream.jobpool.JobBuffer import JobBuffer
+from JobBuffer import JobBuffer
 
 level = logging.DEBUG
 log = logging.getLogger(__name__)

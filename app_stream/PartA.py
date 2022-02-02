@@ -1,8 +1,8 @@
 import time
-from app_stream.jobpool.JobStreamer import *
-from app_stream.filehandle.FileRead import FileRead
-from app_stream.tokenizer.Tokenizer import MyTokenizer
-from app_stream.utils import Constants
+from JobStreamer import *
+from FileRead import FileRead
+from Tokenizer import MyTokenizer
+import Constants
 
 
 class Controller:

@@ -1,4 +1,4 @@
-from app_stream.utils import Constants
+import Constants
 
 
 class FileRead:
