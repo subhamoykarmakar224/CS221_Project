@@ -1,5 +1,6 @@
 import os, re, sys
 import Constants
+import string
 
 
 complete_token_count_list = list()
@@ -57,6 +58,9 @@ def compute_word_frequency(tokens):
                 need_jump = True
                 jump = 2
         except:
+            continue
+
+        if len(cur_token) < 2 and cur_token not in ['@', '#', '*', '&', "'"]:
             continue
 
         if cur_token not in tmp_count:
