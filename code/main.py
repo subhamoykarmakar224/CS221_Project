@@ -1,5 +1,5 @@
-from app.app import app
+from app.app import webapp
 
 if __name__ == '__main__':
     # TODO :: Load indexed model
-    app.run(debug=True)
+    webapp.run(debug=True)

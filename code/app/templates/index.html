@@ -9,10 +9,11 @@
     </div>
     <p class="text-danger">{{ error }}</p>
 </form>
+<p>Query Time: {{ qtime }}s</p>
 
-<div class="list-group mt-3">
+<div class="list-group mt-3 mb-5">
     {% for res in results %}
-    <a href="{{ res['url'] }}" class="list-group-item list-group-item-action" aria-current="true">
+    <a href="{{ res['url'] }}" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{ res['title'] }}</h5>
             <small>Last Updated {{ res['last_updated'] }} days ago</small>

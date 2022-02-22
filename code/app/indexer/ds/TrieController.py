@@ -20,6 +20,7 @@ class TrieController:
 
             if not cur.documents.__contains__((doc, cnt)):
                 cur.documents.append((doc, cnt))
+                # cur.documents = sorted(cur.documents, key = lambda x : x[1], reverse=True)
             cur = cur.children[c]
 
     def search_prefix(self, prefix):
@@ -33,7 +34,10 @@ class TrieController:
         return docs
 
     def load_root_trie_pickle(self):
-        url = './pickle/data/root.pickle'
+        with open('test.txt', 'w') as f:
+            f.write('TEST')
+
+        url = './app/indexer/pickle/data/root.pickle'
         # url = 'app/indexer/pickle/data/root.pickle'
 
         if not os.path.isfile(url):

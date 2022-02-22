@@ -10,6 +10,7 @@ class Indexer:
     def __init__(self):
         self.npl = NLP()
         self.t = TrieController()
+        self.urls_file = open('./pickle/data/urls_in_page.txt', 'a')
 
     def get_list_of_files(self, url):
         file_list = []
@@ -24,11 +25,13 @@ class Indexer:
     def start_indexing(self, url):
         ts = time.time()
         file_list = self.get_list_of_files(url)
-        for i in range(0, len(file_list[:1000])):
+        for i in range(0, len(file_list)):
             print(f'Indexing...{i} of {len(file_list)}')
             self.read_file_tokenize(file_list[i])
 
+        self.t.save_trie_pickle()
         print(f'Time Taken for {len(file_list)} files: {str(time.time() - ts)}')
+        self.urls_file.close()
 
     def read_file_tokenize(self, file_uri):
         with open(file_uri, 'r') as f:
@@ -57,16 +60,23 @@ class Indexer:
     def add_data_to_trie(self, data, uri):
         for k in data:
             self.t.insert(k, uri, int(data[k]))
-        self.t.save_trie_pickle()
+        # self.t.save_trie_pickle()
 
     def save_urls(self, url, links):
-        with open('./pickle/data/urls_in_page.txt', 'a') as f:
-            f.write(url + '\t' + str(links) + '\n')
+        self.urls_file.write(url + '\t' + str(links) + '\n')
+        # with open('./pickle/data/urls_in_page.txt', 'a') as f:
+        #     f.write(url + '\t' + str(links) + '\n')
 
 
 if __name__ == '__main__':
     ind = Indexer()
-    # url_analyst = '../../data/analyst/ANALYST/'
-    # ind.start_indexing(url_analyst)
-    url_dev = '../../data/developer/DEV/'
-    ind.start_indexing(url_dev)
+    url_analyst = '../../data/analyst/ANALYST/'
+    ind.start_indexing(url_analyst)
+    # url_dev = '../../data/developer/DEV/'
+    # ind.start_indexing(url_dev)
+
+    # t = TrieController()
+    # tm = time.time()
+    # print(t.search_prefix('pol'))
+    # print(f'Search Time: {(time.time() - tm)}')
+
