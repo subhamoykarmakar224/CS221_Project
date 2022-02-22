@@ -43,7 +43,7 @@ def make_index():
                         if token not in inverted_index:
                             inverted_index[token] = dict()
                         
-                        if url not in inverted_index[token]:
+                        if docId not in inverted_index[token]:
                             inverted_index[token][docId] = 0
                         
                         inverted_index[token][docId] += 1
