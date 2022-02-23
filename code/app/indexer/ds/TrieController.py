@@ -12,15 +12,20 @@ class TrieController:
         self = self.load_root_trie_pickle()
         self.root = self.root
 
-    def insert(self, word, doc, cnt):
+    def insert(self, word, doc, cnt, url):
         cur = self.root
+        depth = -1
         for c in word:
+            depth += 1
             if c not in cur.children:
                 cur.children[c] = TrieNode()
 
-            if not cur.documents.__contains__((doc, cnt)):
-                cur.documents.append((doc, cnt))
-                # cur.documents = sorted(cur.documents, key = lambda x : x[1], reverse=True)
+            if not cur.documents.__contains__((doc, cnt, url)):
+                cur.documents.append((doc, cnt, url))
+
+            if depth == 5:
+                break
+
             cur = cur.children[c]
 
     def search_prefix(self, prefix):
@@ -34,11 +39,8 @@ class TrieController:
         return docs
 
     def load_root_trie_pickle(self):
-        with open('test.txt', 'w') as f:
-            f.write('TEST')
-
         url = './app/indexer/pickle/data/root.pickle'
-        # url = 'app/indexer/pickle/data/root.pickle'
+        # url = './pickle/data/root.pickle'
 
         if not os.path.isfile(url):
             self.root = TrieNode()
@@ -51,12 +53,11 @@ class TrieController:
         return pk
 
     def save_trie_pickle(self):
-        url = './pickle/data/root.pickle'
-        # url = 'app/indexer/pickle/data/root.pickle'
+        # url = './pickle/data/root.pickle'
+        url = 'app/indexer/pickle/data/root.pickle'
         pk = self
         with open(url, 'wb') as f:
             pickle.dump(pk, f)
-
 
 # if __name__ == '__main__':
 #     s = ['apple', 'mouse', 'app', 'mousepad']
@@ -67,4 +68,4 @@ class TrieController:
 #         t.insert(s[i], document[i], cnt[i], )
 #     t.save_trie_pickle()
 
-    # print(t.search_prefix('mousep'))
+# print(t.search_prefix('mousep'))

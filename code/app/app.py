@@ -1,8 +1,5 @@
-import os.path
 import datetime
-import json
 from flask import Flask, render_template, request
-from app.utils.Database import get_data
 from app.indexer.ds.TrieController import TrieController
 
 webapp = Flask(__name__)
@@ -26,14 +23,9 @@ def index():
 
             result = []
             for r in res:
-                with open(r[0], 'r') as f:
-                    web_dict_data = json.load(f)
-                    url = web_dict_data['url']
-                    encoding = web_dict_data['encoding']
-
-                    result.append({
-                        'title': url, 'tags': str(r[0][r[0].index('\\') + 1:]), 'last_updated': '10', 'url': url
-                    })
+                result.append({
+                    'title': r[2], 'tags': str(r[0][r[0].index('\\') + 1:]), 'last_updated': '10', 'url': r[2]
+                })
             res = result
     end_time = datetime.datetime.now()
 

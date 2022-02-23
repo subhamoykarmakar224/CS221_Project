@@ -44,7 +44,7 @@ class Indexer:
                 separate_data(web_content, url, encoding, self.npl)
 
             # Add to Trie DS
-            self.add_data_to_trie(text_data, file_uri)
+            self.add_data_to_trie(text_data, file_uri, url)
             # print(
             # meta_content_type,
             # meta_content_charset,
@@ -57,9 +57,9 @@ class Indexer:
             # Add URLS
             self.save_urls(url, links)
 
-    def add_data_to_trie(self, data, uri):
+    def add_data_to_trie(self, data, uri, url):
         for k in data:
-            self.t.insert(k, uri, int(data[k]))
+            self.t.insert(k, uri, int(data[k]), url)
         # self.t.save_trie_pickle()
 
     def save_urls(self, url, links):
@@ -77,6 +77,6 @@ if __name__ == '__main__':
 
     # t = TrieController()
     # tm = time.time()
-    # print(t.search_prefix('pol'))
+    # print(t.search_prefix('a'))
     # print(f'Search Time: {(time.time() - tm)}')
 
