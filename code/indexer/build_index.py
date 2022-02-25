@@ -1,18 +1,19 @@
 import os
 import json
+import pickle
+from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
-from bs4 import BeautifulSoup
-import pickle
 
 
+# builds the inverted index in memory
 def make_index():
     stop_list = set(stopwords.words('english'))
     ps = PorterStemmer()
 
     # TODO: modify start directory as needed for your machines and/or change to DEV
-    start_directory = "../../../ANALYST"
+    start_directory = "../../../DEV"
 
     # structure of index is: {term : {docId :  frequency of term in doc} }
     # TODO: change to use the Posting class to store more metadata for each term
@@ -32,6 +33,7 @@ def make_index():
             try:
                 with open(filename, 'r') as f:
 
+                    # load the data as json to separate content from url
                     data = json.load(f)
 
                     url = data['url']
@@ -39,7 +41,10 @@ def make_index():
 
                     soup = BeautifulSoup(data["content"], 'html.parser')
 
+                    # tokenize just the text from the page
                     tokens = word_tokenize(soup.get_text(separator="\n", strip=True))
+
+                    # remove stopwords and do stemming
                     tokens = [ps.stem(t) for t in tokens if (t not in stop_list and len(t) > 1)]
 
                     for token in tokens:
@@ -53,7 +58,7 @@ def make_index():
 
                     docId += 1
 
-                    # can track progress or return early to see indexer working as expected
+                    # track progress to see indexer working as expected
                     if docId % 1000 == 0:
                         print(len(inverted_index))
                         print(docId)
@@ -61,7 +66,7 @@ def make_index():
             except Exception as e:
                 print(e)
 
-    # pickle the inverted_index and aux_map
+    # write inverted_index and aux_map to disk as pickle files
     with open('index_pickle', 'ab') as index_file:
         pickle.dump(inverted_index, index_file, protocol=-1)                     
     
@@ -69,10 +74,10 @@ def make_index():
         pickle.dump(aux_map, aux_file, protocol=-1)   
 
 
+# print the index and auxiliary map to ensure they were built correctly
 def print_index():
     with open('auxMap_pickle', 'rb') as aux_file:
         aux_map = pickle.load(aux_file)
-
         print(f'{len(aux_map)} documents')
     
         # for docId in aux_map:
@@ -82,7 +87,6 @@ def print_index():
     
     with open('index_pickle', 'rb') as index_file:
         inverted_index = pickle.load(index_file, encoding="bytes")
-
         print(f'{len(inverted_index)} terms')
 
         # for term in sorted(inverted_index, key = lambda t: -len(inverted_index[t])):
