@@ -24,7 +24,7 @@ def index():
             result = []
             for r in res:
                 result.append({
-                    'title': r[2], 'tags': str(r[0][r[0].index('\\') + 1:]), 'last_updated': '10', 'url': r[2]
+                    'title': r[2], 'tags': str(r[0][r[0].index('\\') + 1:]), 'last_updated': '-na-', 'url': r[2]
                 })
             res = result
     end_time = datetime.datetime.now()
