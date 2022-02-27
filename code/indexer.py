@@ -70,7 +70,7 @@ class IndexerController:
                 folder_name,
                 url
             )
-            self.index_of_index_tree(word, offset, folder_name)
+            # self.index_of_index_tree(word, offset, folder_name)
 
     def index_cluster_fs(self, word, word_count, word_pos, folder_name, url):
         offset = 0
@@ -113,7 +113,7 @@ class IndexerController:
         logging.info(f'Batch size: {self.BATCH_SIZE} files.')
         self.create_tmp_N_TMP_folders()
         file_data = dict()
-        for i in range(0, len(self.file_list[:500]), self.BATCH_SIZE):
+        for i in range(0, len(self.file_list), self.BATCH_SIZE):
             start = i
             end = i + self.BATCH_SIZE
             if end > len(self.file_list):
