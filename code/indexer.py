@@ -6,6 +6,7 @@ import shutil
 import json
 import io
 from Indexer.Tokenizer import NLP
+from Indexer.IndexMerger import IndexMerger
 import logging
 
 logging.basicConfig(
@@ -13,12 +14,6 @@ logging.basicConfig(
     format='%(levelname)s %(asctime)s :: %(message)s',
     level=logging.DEBUG
 )
-# Levels are as follows from most to least critical
-#   CRITICAL
-#   ERROR
-#   WARNING
-#   INFO
-#   DEBUG
 
 
 class IndexerController:
@@ -36,7 +31,8 @@ class IndexerController:
         print(
             f'Calculating... {i} => { i + len(file_list) - 1} , writing to: {folder_name}'
         )
-        logging.info(f'Calculating... {i} => { i + len(file_list) - 1} , writing to: {folder_name}')
+        logging.info(
+            f'Calculating... {i} => { i + len(file_list) - 1} , writing to: {folder_name}')
 
         # Create Sub-folders
         self.create_tmp_N_TMP_sub_folder(folder_name)
@@ -70,7 +66,6 @@ class IndexerController:
                 folder_name,
                 url
             )
-            # self.index_of_index_tree(word, offset, folder_name)
 
     def index_cluster_fs(self, word, word_count, word_pos, folder_name, url):
         offset = 0
@@ -93,12 +88,10 @@ class IndexerController:
 
         return offset
 
-    def index_of_index_tree(word, offset):
-        pass
-
     def merge_indexes(self):
         logging.info('Merge index: Start')
-        # TODO :: Merge intermediate indexes
+        m = IndexMerger(logging, self.N_WORKERS)
+        m.controller()
         logging.info('Merge index: End')
 
     def create_tmp_N_TMP_folders(self):
@@ -149,12 +142,16 @@ def clean_up_tmp():
 if __name__ == '__main__':
     url_analyst = '../dataset/ANALYST/'
     url_dev = '../dataset/DEV/'
+    
+    file_list = []
+
     clean_up_tmp()  # Clean up old indexed files
     file_list = get_list_of_files(url_analyst)  # Get list of files and URLs
 
     t1 = datetime.now()
     indexer = IndexerController(file_list)
     indexer.controller()
+    indexer.merge_indexes()
     t2 = datetime.now()
 
     print(f'Exec Time {t2 - t1}')
