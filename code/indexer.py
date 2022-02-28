@@ -7,6 +7,7 @@ import json
 import io
 from Indexer.Tokenizer import NLP
 from Indexer.IndexMerger import IndexMerger
+from Indexer.ConstructL2Index import ConstructL2Index
 import logging
 
 logging.basicConfig(
@@ -140,17 +141,23 @@ if __name__ == '__main__':
     url_analyst = '../dataset/ANALYST/'
     url_dev = '../dataset/DEV/'
     
-    file_list = []
-
     # clean_up_tmp()  # Clean up old indexed files
     # file_list = get_list_of_files(url_analyst)  # Get list of files and URLs
 
+    # Create Index to form 3 clusters
     t1 = datetime.now()
-    indexer = IndexerController(file_list)
+    # indexer = IndexerController(file_list)
     # indexer.controller()
     
-    m = IndexMerger(logging)
-    m.controller()
+    # Merge Index to form 3 clusters
+    # m = IndexMerger(logging)
+    # m.controller()
+
+    # Create Index of Index form clusters
+    iofi = ConstructL2Index(logging)
+    iofi.controller()
+
+
 
     t2 = datetime.now()
 
