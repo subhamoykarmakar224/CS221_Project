@@ -88,11 +88,11 @@ class IndexerController:
 
         return offset
 
-    def merge_indexes(self):
-        logging.info('Merge index: Start')
-        m = IndexMerger(logging, self.N_WORKERS)
-        m.controller()
-        logging.info('Merge index: End')
+    # def merge_indexes(self):
+    #     logging.info('Merge index: Start')
+    #     m = IndexMerger(logging, self.N_WORKERS)
+    #     m.controller()
+    #     logging.info('Merge index: End')
 
     def create_tmp_N_TMP_folders(self):
         if not os.path.isdir(self.TMP_URL):
@@ -116,9 +116,6 @@ class IndexerController:
         # Start Parallel processing
         p = multiprocessing.Pool(self.N_WORKERS)
         p.map(self._worker, file_data.items())
-
-        # TODO :: Merge Files
-        self.merge_indexes()
 
         logging.info('Success. All indexes created.')
 
@@ -145,13 +142,16 @@ if __name__ == '__main__':
     
     file_list = []
 
-    clean_up_tmp()  # Clean up old indexed files
-    file_list = get_list_of_files(url_analyst)  # Get list of files and URLs
+    # clean_up_tmp()  # Clean up old indexed files
+    # file_list = get_list_of_files(url_analyst)  # Get list of files and URLs
 
     t1 = datetime.now()
     indexer = IndexerController(file_list)
-    indexer.controller()
-    indexer.merge_indexes()
+    # indexer.controller()
+    
+    m = IndexMerger(logging)
+    m.controller()
+
     t2 = datetime.now()
 
     print(f'Exec Time {t2 - t1}')
