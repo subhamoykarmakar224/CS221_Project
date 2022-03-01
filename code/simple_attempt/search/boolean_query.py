@@ -44,13 +44,10 @@ if __name__ == '__main__':
 
 
     # limit found documents to those that contain ALL the query tokens
-    intersection = None
+    intersection = term_freqs[query_tokens[0]].keys()
 
-    for i in range(len(query_tokens) - 1):
-        currToken = query_tokens[i]
-        nextToken = query_tokens[i+1]
-
-        intersection = term_freqs[currToken].keys() & term_freqs[nextToken].keys()
+    for i in range(1, len(query_tokens)):
+        intersection = intersection & term_freqs[ query_tokens[i] ].keys()
 
 
     # compute tf-idf score for each found document
