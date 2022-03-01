@@ -142,7 +142,7 @@ if __name__ == '__main__':
     url_dev = '../dataset/DEV/'
     
     # clean_up_tmp()  # Clean up old indexed files
-    # file_list = get_list_of_files(url_analyst)  # Get list of files and URLs
+    file_list = get_list_of_files(url_analyst)  # Get list of files and URLs
 
     # Create Index to form 3 clusters
     t1 = datetime.now()
@@ -156,8 +156,6 @@ if __name__ == '__main__':
     # Create Index of Index form clusters
     iofi = ConstructL2Index(logging)
     iofi.controller()
-
-
 
     t2 = datetime.now()
 

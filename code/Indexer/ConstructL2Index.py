@@ -27,25 +27,34 @@ class ConstructL2Index:
     def _worker(self, path):
         files = self.get_list_of_files(path)
         for f_path in files:
-            print(f_path)
             lines = []
             with open(f_path, 'r') as f:
                 lines = f. readlines()
-            
+
             for i in range(len(lines)):
-                tmp = lines[i].split('||')
-                lines[i] = tmp
-                print(lines[i])
+                try:
+                    tmp = lines[i].split('||')
+                    if len(tmp) >= 4:
+                        tmp[2] = int(tmp[2])
+                        lines[i] = tmp
+                    else:
+                        lines[i] = ['', '', 0, '', '']
+                except:
+                    self.logging.error(f'Error parsing: {tmp}')
+                    lines[i] = ['', '', 0, '', '']
+            
+            lines = sorted(lines, key=lambda x: x[2], reverse=True)
 
-            lines = sorted(lines, key = lambda x: x[2], reverse=True)
-
-            # Todo:: .... Code ....
-
-            break
+            with open(f_path, 'w') as f:
+                for l in lines:
+                    if l[2] != 0:
+                        l[2] = str(l[2])
+                        f.write('||'.join(l))
 
     def controller(self):
         self.create_ioi_folder()
         clusters = [os.path.join('.', 'Indexer', 'iclusters', folder)
                     for folder in self.get_icluster_folder()]
-        for c in clusters[:1]:
+        for c in clusters:
+            self.logging.info(f'Parsing cluster: {c}')
             self._worker(c)
