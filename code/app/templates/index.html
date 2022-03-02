@@ -16,9 +16,9 @@
     <a href="{{ res['url'] }}" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{ res['title'] }}</h5>
-            <small>Last Updated {{ res['last_updated'] }} days ago</small>
+            <small>Score {{ res['score'] }}</small>
         </div>
-        <p class="mb-1">{{ res['tags'] }}</p>
+        <!-- <p class="mb-1">{{ res['tags'] }}</p> -->
         <small>{{ res['url'] }}</small>
     </a>
     {% endfor %}

@@ -11,7 +11,7 @@ from Indexer.ConstructL2Index import ConstructL2Index
 import logging
 
 logging.basicConfig(
-    filename='./logs/.log',
+    filename='./logs/indexer.log',
     format='%(levelname)s %(asctime)s :: %(message)s',
     level=logging.DEBUG
 )
@@ -136,27 +136,46 @@ def clean_up_tmp():
         shutil.rmtree(TMP_URL)
 
 
+def clean_up_iclusters():
+    TMP_URL = os.path.join('.', 'Indexer', 'iclusters')
+    if os.path.isdir(TMP_URL):
+        shutil.rmtree(TMP_URL)
+
+
+def clean_up_ioi():
+    TMP_URL = os.path.join('.', 'Indexer', 'ioi')
+    if os.path.isdir(TMP_URL):
+        shutil.rmtree(TMP_URL)
+
+
 # Start Indexer
 if __name__ == '__main__':
     url_analyst = '../dataset/ANALYST/'
     url_dev = '../dataset/DEV/'
-    
-    # clean_up_tmp()  # Clean up old indexed files
-    file_list = get_list_of_files(url_analyst)  # Get list of files and URLs
+
+    # Clean up old indexed files
+    clean_up_tmp()
+    clean_up_iclusters()
+    clean_up_ioi()
+
+    # Get list of files and URLs
+    file_list = get_list_of_files(url_analyst)
 
     # Create Index to form 3 clusters
     t1 = datetime.now()
-    # indexer = IndexerController(file_list)
-    # indexer.controller()
-    
+    indexer = IndexerController(file_list)
+    indexer.controller()
+
     # Merge Index to form 3 clusters
-    # m = IndexMerger(logging)
-    # m.controller()
+    m = IndexMerger(logging)
+    m.controller()
 
     # Create Index of Index form clusters
     iofi = ConstructL2Index(logging)
-    iofi.controller()
+    iofi.sort_cluster_controller()
 
+    # Create Index Of Index
+    iofi.create_ioi_controller()
     t2 = datetime.now()
-
+    
     print(f'Exec Time {t2 - t1}')

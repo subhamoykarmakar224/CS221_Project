@@ -1,8 +1,12 @@
 import datetime
 from flask import Flask, render_template, request
-
+from datetime import datetime
+from app.GetData import GetData
+from app.util import clean_data
 
 webapp = Flask(__name__)
+
+get_data = GetData()
 
 
 @webapp.route('/', methods=['POST', 'GET'])
@@ -10,19 +14,17 @@ def index():
     res = []
     prefix = '\t'
     error = ''
-    start_time = datetime.datetime.now()
+    qtime = 0
+    start_time = datetime.now()
     if request.method == 'POST':
         prefix = request.form.get('searchterm')
         if prefix == '' or prefix == '/':
             error = 'Please enter a valid string to search'
         else:
-            res = [
-                {'title': 'T1', 'tags': '#tag1', 'last_updated': '-na-', 'url': 'http://test1.html'},
-                {'title': 'T2', 'tags': '#tag2', 'last_updated': '-na-', 'url': 'http://test2.html'},
-                {'title': 'T3', 'tags': '#tag3', 'last_updated': '-na-', 'url': 'http://test3.html'},
-                {'title': 'T4', 'tags': '#tag4', 'last_updated': '-na-', 'url': 'http://test4.html'}
-                ]
+            res = get_data.get_data(prefix)
+            end_time = datetime.now()
+            qtime = end_time - start_time
+            print('Search Term: ', prefix)
+            res = clean_data(res)
 
-    end_time = datetime.datetime.now()
-
-    return render_template('index.html', results=res, prefix=prefix, error=error, qtime=end_time - start_time)
+    return render_template('index.html', results=res, prefix=prefix, error=error, qtime=qtime)
