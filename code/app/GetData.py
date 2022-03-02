@@ -1,6 +1,8 @@
 import os
 from tracemalloc import start
 from Indexer.ds.TrieLoader import TrieLoader
+from app.util import clean_data
+
 
 class GetData:
     def __init__(self):
@@ -16,11 +18,11 @@ class GetData:
         return l
 
     def load_search_index_ioi(self):
-        files = self.get_list_of_index_clusters(os.path.join('.', 'Indexer', 'ioi'))
+        files = self.get_list_of_index_clusters(
+            os.path.join('.', 'Indexer', 'ioi'))
         for f in files:
             trie_loader = TrieLoader(f)
             self.search_index.append(trie_loader)
-        
 
     def get_data(self, prefix):
         prefix = prefix.lower()
@@ -34,18 +36,23 @@ class GetData:
         for i in range(len(self.search_index)):
             trie_loader = self.search_index[i]
             start_off, end_off = trie_loader.search_prefix(prefix)
-            index_2d_url = os.path.join('.', 'Indexer', 'iclusters', 'cluster-' + str(i))
+            index_2d_url = os.path.join(
+                '.', 'Indexer', 'iclusters', 'cluster-' + str(i))
             if not os.path.isfile(os.path.join(index_2d_url, prefix_2d + '.txt')):
                 continue
             tmp = []
             cnt = 0
-            with open(os.path.join(index_2d_url, prefix_2d + '.txt'), 'r') as f:
+            with open(os.path.join(index_2d_url, prefix_2d + '.txt'), 'r', encoding='utf-8') as f:
                 f.seek(start_off)
                 while f.tell() <= end_off or cnt != 30:
-                    ln  = f.readline()
-                    if len(ln) == 0: break
+                    ln = f.readline()
+                    if len(ln) == 0:
+                        break
                     tmp.append(f.readline())
                     cnt += 1
-            search_result = search_result + tmp[:30]
+
+            search_result = search_result + tmp
         
+        search_result = clean_data(search_result)
+
         return search_result

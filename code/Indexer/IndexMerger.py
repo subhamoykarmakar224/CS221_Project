@@ -65,15 +65,15 @@ class IndexMerger:
                 p2 = os.path.join(file_url_2, file_data_1[i])
                 data1, data2 = '', ''
                 if os.path.isfile(p1):
-                    with open(p1, 'r') as f:
+                    with open(p1, 'r', encoding='utf-8') as f:
                         data1 = f.read()
                 if os.path.isfile(p2):
-                    with open(p2, 'r') as f:
+                    with open(p2, 'r', encoding='utf-8') as f:
                         data2 = f.read()
                 
                 data1 += '\n'
                 data1 += data2
-                with open(os.path.join(icluster_folder, file_data_1[i]), 'w') as f:
+                with open(os.path.join(icluster_folder, file_data_1[i]), 'w', encoding='utf-8') as f:
                     f.write(data1)
                 
     def get_2prefix_file_list(self, url):

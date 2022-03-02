@@ -25,7 +25,7 @@ class ConstructL2Index:
         files = self.get_list_of_files(path)
         for f_path in files:
             lines = []
-            with open(f_path, 'r') as f:
+            with open(f_path, 'r', encoding='utf-8') as f:
                 lines = f. readlines()
 
             for i in range(len(lines)):
@@ -37,14 +37,14 @@ class ConstructL2Index:
                     else:
                         lines[i] = ['', '', 0, '', '']
                 except:
-                    self.logging.error(f'Error parsing: {tmp}')
+                    self.logging.error(f'Error parsing: {tmp} :: {lines[i]}')
                     lines[i] = ['', '', 0, '', '']
 
             lines = sorted(lines, key=lambda x: (
                 x[0]), reverse=False)  # Sort by prefix
             # lines = sorted(lines, key=lambda x: (x[2]), reverse=True)  # Sort by freq
 
-            with open(f_path, 'w') as f:
+            with open(f_path, 'w', encoding='utf-8') as f:
                 for l in lines:
                     if l[2] != 0:
                         l[2] = str(l[2])
@@ -82,7 +82,7 @@ class ConstructL2Index:
         file_list = self.get_list_of_files(os.path.join(
             '.', 'Indexer', 'iclusters', cluster_url))
         for file in file_list:
-            with open(file, 'r') as f:
+            with open(file, 'r', encoding='utf-8') as f:
                 next_seek = 0
                 while True:
                     line = f.readline()

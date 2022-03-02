@@ -15,7 +15,7 @@ def clean_data(data):
         )
 
     res = sorted(res, key=lambda x: (x['tags'], 1.0/x['score']), reverse=False)
-    return res[:20]
+    return res[:25]
 
 
 # ['levorato||https://www.cs.uci.edu/dutt-levorato-awarded-nsf-grant-for-healthcare-iot-research/||6||[28, 2667, 2837, 2893, 3102, 3177]||\n',...

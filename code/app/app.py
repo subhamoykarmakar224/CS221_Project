@@ -2,7 +2,6 @@ import datetime
 from flask import Flask, render_template, request
 from datetime import datetime
 from app.GetData import GetData
-from app.util import clean_data
 
 webapp = Flask(__name__)
 
@@ -25,6 +24,6 @@ def index():
             end_time = datetime.now()
             qtime = end_time - start_time
             print('Search Term: ', prefix)
-            res = clean_data(res)
+            # res = clean_data(res)
 
     return render_template('index.html', results=res, prefix=prefix, error=error, qtime=qtime)

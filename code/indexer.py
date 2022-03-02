@@ -1,14 +1,17 @@
+from dataclasses import asdict
 from datetime import datetime
 import multiprocessing
+import concurrent.futures
 from datetime import datetime
 import os
 import shutil
 import json
-import io
 from Indexer.Tokenizer import NLP
 from Indexer.IndexMerger import IndexMerger
 from Indexer.ConstructL2Index import ConstructL2Index
 import logging
+from bs4 import BeautifulSoup
+
 
 logging.basicConfig(
     filename='./logs/indexer.log',
@@ -19,8 +22,10 @@ logging.basicConfig(
 
 class IndexerController:
     def __init__(self, file_list):
+        # self.N_WORKERS = 4
+        # self.BATCH_SIZE = 800
         self.N_WORKERS = 4
-        self.BATCH_SIZE = 300
+        self.BATCH_SIZE = 400
         self.file_list = file_list
         self.tmp_folders = list()
         self.TMP_URL = os.path.join('.', 'Indexer', 'tmp')
@@ -40,9 +45,9 @@ class IndexerController:
 
         for file_url in file_list:
             try:
-                print(f'Parsing file...{file_url}')
+                # print(f'Parsing file...{file_url}')
                 logging.info(f'Parsing file...{file_url}')
-                with open(file_url, 'r') as f:
+                with open(file_url, 'r', encoding='utf-8') as f:
                     web_dict_data = json.load(f)
                     url = web_dict_data['url']
                     web_content = web_dict_data['content']
@@ -56,11 +61,12 @@ class IndexerController:
 
     def tokenize_and_get_posting_obj_list(self, url, content, encoding, folder_name):
         # Tuple(...('contact', [2, [3633, 3866]])...)
-        res = self.tokenizer.word_tokenizer_count(content)
+        soup = BeautifulSoup(str(content), 'html.parser')
+        res = self.tokenizer.word_tokenizer_count(soup.text)
         for word, cnt_pos in res:
             word_count = cnt_pos[0]
             word_pos_list = cnt_pos[1]
-            offset = self.index_cluster_fs(
+            self.index_cluster_fs(
                 word,
                 word_count,
                 word_pos_list,
@@ -81,19 +87,10 @@ class IndexerController:
 
         file_name = file_uri + '.txt'
 
-        with open(os.path.join(folder_name, file_name), 'a') as f:
-            offset = f.tell()
+        with open(os.path.join(folder_name, file_name), 'a', encoding="utf-8") as f:
             s = [word, url, str(word_count), str(word_pos), '\n']
             s = '||'.join(s)
             f.write(s)
-
-        return offset
-
-    # def merge_indexes(self):
-    #     logging.info('Merge index: Start')
-    #     m = IndexMerger(logging, self.N_WORKERS)
-    #     m.controller()
-    #     logging.info('Merge index: End')
 
     def create_tmp_N_TMP_folders(self):
         if not os.path.isdir(self.TMP_URL):
@@ -115,8 +112,16 @@ class IndexerController:
             file_data[i] = self.file_list[start:end]
 
         # Start Parallel processing
-        p = multiprocessing.Pool(self.N_WORKERS)
-        p.map(self._worker, file_data.items())
+        # pool = multiprocessing.Pool(processes=self.N_WORKERS)
+        # pool.map(self._worker, file_data.items())
+        # pool.close() # no more tasks
+        # pool.join()  # wrap up current tasks
+
+        with multiprocessing.Pool(processes=self.N_WORKERS) as p:
+            p.map(self._worker, file_data.items())
+
+        # TODO :: Delete this later: for testing purpose only
+        # self._worker((0, file_data[0]))
 
         logging.info('Success. All indexes created.')
 
@@ -159,7 +164,9 @@ if __name__ == '__main__':
     clean_up_ioi()
 
     # Get list of files and URLs
-    file_list = get_list_of_files(url_analyst)
+    file_list = get_list_of_files(url_dev)
+    print(f'Found {len(file_list)} files to index')
+    logging.info(f'Found {len(file_list)} files to index')
 
     # Create Index to form 3 clusters
     t1 = datetime.now()
@@ -177,5 +184,6 @@ if __name__ == '__main__':
     # Create Index Of Index
     iofi.create_ioi_controller()
     t2 = datetime.now()
-    
+
     print(f'Exec Time {t2 - t1}')
+    logging.info(f'Exec Time {t2 - t1}')

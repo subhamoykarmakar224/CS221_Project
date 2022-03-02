@@ -34,11 +34,11 @@ class NLP:
         return sorted(patemp, key=lambda val: val[0])[0][1]
 
 
-a = '''
-The oldest classical Greek and Latin writing had little or no space between words and could be written 
-in boustrophedon (alternating directions). Over time, text direction (left to right) became standardized, 
-and word dividers and terminal punctuation became common.
-'''
+# a = '''
+# The oldest classical Greek and Latin writing had little or no space between words and could be written 
+# in boustrophedon (alternating directions). Over time, text direction (left to right) became standardized, 
+# and word dividers and terminal punctuation became common.
+# '''
 # n = NLP()
 # res = n.word_tokenizer_count(a)
 # for r in res:
