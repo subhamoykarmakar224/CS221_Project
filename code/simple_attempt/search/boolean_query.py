@@ -1,5 +1,7 @@
 import pickle
+import math
 from pydoc import doc
+from secrets import token_hex
 
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
@@ -13,20 +15,19 @@ if __name__ == '__main__':
 
     with open('../indexer/pickles/auxiliary_map', 'rb') as aux_file:
         aux_map = pickle.load(aux_file, encoding="bytes")
+    N = len(aux_map)
 
     with open('../indexer/pickles/inverted_index', 'rb') as index_file:
         inverted_index = pickle.load(index_file, encoding="bytes")
-    
-    with open('../indexer/pickles/document_frequency', 'rb') as index_file:
-        document_frequencies = pickle.load(index_file, encoding="bytes")
 
     stop_list = set(stopwords.words('english'))
     ps = PorterStemmer()
 
-    query_tokens = word_tokenize(input("Search Query: "))
-    # query_tokens = word_tokenize("cristina lopes")
+    #query_tokens = word_tokenize(input("Search Query: "))
+    query_tokens = word_tokenize("cristina lopes")
     print()
     query_tokens = [ps.stem(t) for t in query_tokens if (t not in stop_list and len(t) > 1)]
+
 
     # get all the term frequencies for each query token
     term_freqs = dict()
@@ -36,11 +37,12 @@ if __name__ == '__main__':
 
         if token in inverted_index:
 
-            for docId in inverted_index[token]:
-                if docId not in term_freqs:
-                   term_freqs[token][docId] = 0
+            m = len(inverted_index[token])
 
-                term_freqs[token][docId] += inverted_index[token][docId]
+            for docId in inverted_index[token]:
+                tf = 1 + math.log(inverted_index[token][docId])
+                idf = math.log(N / m)
+                term_freqs[token][docId] = tf * idf
 
 
     # limit found documents to those that contain ALL the query tokens
@@ -50,7 +52,7 @@ if __name__ == '__main__':
         intersection = intersection & term_freqs[ query_tokens[i] ].keys()
 
 
-    # compute tf-idf score for each found document
+    # gather total tf-idf scores by combining individual tf-idf scores for each query token 
     tf_idfs = dict()
 
     for docId in intersection:
@@ -59,8 +61,6 @@ if __name__ == '__main__':
         for token in query_tokens:
             tf_idfs[docId] += term_freqs[token][docId]
 
-        tf_idfs[docId] /= document_frequencies[docId]
-            
 
     # output top 5 URLs sorted by tf-idf score
     found_docs = []
@@ -72,5 +72,5 @@ if __name__ == '__main__':
             break
 
     for url, tfidf in found_docs:
-        print(f'{url}, tf-idf: {tfidf}')
+        print(f'{url}, tf-idf: {tfidf :.3f}')
     print()

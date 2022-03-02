@@ -24,7 +24,7 @@ def make_index():
     docId = 0
 
     # track number of terms in documents to be used in tf-idf
-    document_frequency = dict()
+    # document_frequency = dict()
 
     # TODO: process documents in batches and dump to disk as we go instead of just at the end
 
@@ -41,7 +41,7 @@ def make_index():
 
                     url = data['url']
                     aux_map[docId] = url
-                    document_frequency[docId] = 0
+                    # document_frequency[docId] = 0
 
                     soup = BeautifulSoup(data["content"], 'html.parser')
 
@@ -59,7 +59,7 @@ def make_index():
                             inverted_index[token][docId] = 0
                         
                         inverted_index[token][docId] += 1
-                        document_frequency[docId] += 1
+                        # document_frequency[docId] += 1
 
                     docId += 1
 
@@ -78,8 +78,8 @@ def make_index():
     with open('pickles/auxiliary_map', 'ab') as aux_file:
         pickle.dump(aux_map, aux_file, protocol=-1)   
 
-    with open('pickles/document_frequency', 'ab') as docFreq_file:
-        pickle.dump(document_frequency, docFreq_file, protocol=-1)
+    # with open('pickles/document_frequency', 'ab') as docFreq_file:
+    #     pickle.dump(document_frequency, docFreq_file, protocol=-1)
 
 
 # print the index and auxiliary map to ensure they were built correctly
@@ -100,9 +100,9 @@ def print_index():
         # for term in sorted(inverted_index, key = lambda t: -len(inverted_index[t])):
         #     print(f'{term} : {inverted_index[term]}')   
 
-    with open('pickles/document_frequency', 'rb') as file:
-        docFreq = pickle.load(file, encoding="bytes")
-        print(f'{len(docFreq)} documents')
+    # with open('pickles/document_frequency', 'rb') as file:
+    #     docFreq = pickle.load(file, encoding="bytes")
+    #     print(f'{len(docFreq)} documents')
 
         # for docId in docFreq:
         #     print(f'{docId} : {docFreq[docId]}')
