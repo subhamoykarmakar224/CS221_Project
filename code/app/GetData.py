@@ -53,6 +53,6 @@ class GetData:
 
             search_result = search_result + tmp
         
-        search_result = clean_data(search_result)
+        search_result = clean_data(prefix, search_result)
 
         return search_result

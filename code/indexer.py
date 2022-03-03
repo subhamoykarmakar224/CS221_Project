@@ -1,7 +1,6 @@
 from dataclasses import asdict
 from datetime import datetime
 import multiprocessing
-import concurrent.futures
 from datetime import datetime
 import os
 import shutil
@@ -22,10 +21,10 @@ logging.basicConfig(
 
 class IndexerController:
     def __init__(self, file_list):
+        self.N_WORKERS = 6
+        self.BATCH_SIZE = 1000
         # self.N_WORKERS = 4
-        # self.BATCH_SIZE = 800
-        self.N_WORKERS = 4
-        self.BATCH_SIZE = 400
+        # self.BATCH_SIZE = 400
         self.file_list = file_list
         self.tmp_folders = list()
         self.TMP_URL = os.path.join('.', 'Indexer', 'tmp')
@@ -89,7 +88,7 @@ class IndexerController:
 
         with open(os.path.join(folder_name, file_name), 'a', encoding="utf-8") as f:
             s = [word, url, str(word_count), str(word_pos), '\n']
-            s = '||'.join(s)
+            s = '\t'.join(s)
             f.write(s)
 
     def create_tmp_N_TMP_folders(self):
@@ -104,12 +103,12 @@ class IndexerController:
         logging.info(f'Batch size: {self.BATCH_SIZE} files.')
         self.create_tmp_N_TMP_folders()
         file_data = dict()
-        for i in range(0, len(self.file_list), self.BATCH_SIZE):
-            start = i
-            end = i + self.BATCH_SIZE
-            if end > len(self.file_list):
-                end = len(self.file_list)
-            file_data[i] = self.file_list[start:end]
+        # for i in range(0, len(self.file_list), self.BATCH_SIZE):
+        #     start = i
+        #     end = i + self.BATCH_SIZE
+        #     if end > len(self.file_list):
+        #         end = len(self.file_list)
+        #     file_data[i] = self.file_list[start:end]
 
         # Start Parallel processing
         # pool = multiprocessing.Pool(processes=self.N_WORKERS)
@@ -118,7 +117,7 @@ class IndexerController:
         # pool.join()  # wrap up current tasks
 
         with multiprocessing.Pool(processes=self.N_WORKERS) as p:
-            p.map(self._worker, file_data.items())
+            p.map_async(self._worker, self.file_list, chunksize=self.BATCH_SIZE)
 
         # TODO :: Delete this later: for testing purpose only
         # self._worker((0, file_data[0]))
@@ -158,32 +157,30 @@ if __name__ == '__main__':
     url_analyst = '../dataset/ANALYST/'
     url_dev = '../dataset/DEV/'
 
+    ## START: STAGE 1: Build initial index
     # Clean up old indexed files
-    clean_up_tmp()
-    clean_up_iclusters()
-    clean_up_ioi()
+    # clean_up_tmp()
+    # clean_up_iclusters()
+    # clean_up_ioi()
 
     # Get list of files and URLs
-    file_list = get_list_of_files(url_dev)
-    print(f'Found {len(file_list)} files to index')
-    logging.info(f'Found {len(file_list)} files to index')
+    # file_list = get_list_of_files(url_dev)
+    # print(f'Found {len(file_list)} files to index')
+    # logging.info(f'Found {len(file_list)} files to index')
 
     # Create Index to form 3 clusters
-    t1 = datetime.now()
-    indexer = IndexerController(file_list)
-    indexer.controller()
+    # indexer = IndexerController(file_list)
+    # indexer.controller()
+    ## END: STAGE 1: Build initial index
 
+    ## START: STAGE 2: Build index of index
     # Merge Index to form 3 clusters
-    m = IndexMerger(logging)
-    m.controller()
+    # m = IndexMerger(logging)
+    # m.controller()
 
-    # Create Index of Index form clusters
-    iofi = ConstructL2Index(logging)
-    iofi.sort_cluster_controller()
+    # iofi = ConstructL2Index(logging)
+    # iofi.sort_cluster_controller()
+    # iofi.create_ioi_controller()
+    ## END: STAGE 2: Build index of index
 
-    # Create Index Of Index
-    iofi.create_ioi_controller()
-    t2 = datetime.now()
-
-    print(f'Exec Time {t2 - t1}')
-    logging.info(f'Exec Time {t2 - t1}')
+    print(f'Done.')

@@ -1,22 +1,36 @@
-def clean_data(data):
+def clean_data(prefix, data):
     res = []
+    ln = len(prefix)
     for d in data:
-        tmp = d.split('||')
-        if len(tmp) != 5:
-            continue
-        tmp[2] = int(tmp[2])
-        res.append(
-            {
-                'title': tmp[1],
-                'tags': [tmp[0]],
-                'url': tmp[1],
-                'score': tmp[2]
-            }
-        )
+        try:
+            tmp = d.split('\t')
+            if len(tmp) < 4:
+                continue
+            # get similarity score
+            dist = anti_distance(tmp[0], prefix, ln)
+            tmp[2] = int(tmp[2])
+            res.append(
+                {
+                    'title': tmp[1],
+                    'tags': [tmp[0]],
+                    'url': tmp[1],
+                    'score': tmp[2],
+                    'distance': dist
+                }
+            )
+        except Exception as e:
+            print('ERROR: ', d)
+            print(e.args)
 
-    res = sorted(res, key=lambda x: (x['tags'], 1.0/x['score']), reverse=False)
+    # res = sorted(res, key=lambda x: (x['tags'], 1.0/x['score']), reverse=False)
+    res = sorted(res, key=lambda x: (x['distance'], x['score']), reverse=True)
     return res[:25]
 
+
+def anti_distance(s1, s2, ln):
+    return sum(1 for (a, b) in zip(s1, s2) if a == b)
+
+# anti_distance('subhamoy', 'subas', len('subha'))
 
 # ['levorato||https://www.cs.uci.edu/dutt-levorato-awarded-nsf-grant-for-healthcare-iot-research/||6||[28, 2667, 2837, 2893, 3102, 3177]||\n',...
 # res = [

@@ -30,7 +30,7 @@ class ConstructL2Index:
 
             for i in range(len(lines)):
                 try:
-                    tmp = lines[i].split('||')
+                    tmp = lines[i].split('\t')
                     if len(tmp) >= 4:
                         tmp[2] = int(tmp[2])
                         lines[i] = tmp
@@ -40,15 +40,14 @@ class ConstructL2Index:
                     self.logging.error(f'Error parsing: {tmp} :: {lines[i]}')
                     lines[i] = ['', '', 0, '', '']
 
-            lines = sorted(lines, key=lambda x: (
-                x[0]), reverse=False)  # Sort by prefix
+            lines = sorted(lines, key=lambda x: (x[0]), reverse=False)  # Sort by prefix
             # lines = sorted(lines, key=lambda x: (x[2]), reverse=True)  # Sort by freq
 
             with open(f_path, 'w', encoding='utf-8') as f:
                 for l in lines:
                     if l[2] != 0:
                         l[2] = str(l[2])
-                        f.write('||'.join(l))
+                        f.write('\t'.join(l))
 
     def sort_cluster_controller(self):
         clusters = [os.path.join('.', 'Indexer', 'iclusters', folder)
@@ -87,7 +86,7 @@ class ConstructL2Index:
                 while True:
                     line = f.readline()
                     if len(line) > 1:
-                        prefix = line[:line.index('||')]
+                        prefix = line[:line.index('\t')]
                         # self.logging.info(f'Done building index for cluster: {cluster_url}')
                         trie.insert(prefix, next_seek)
                     if not line:
