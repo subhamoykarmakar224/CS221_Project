@@ -27,9 +27,9 @@ Open `indexer.py`.
 ...
 ## END: STAGE 1: Build initial index
 ```
-Run `python indexer.py`. This would create a partial index for the pages.
+Run `python indexer.py`. This would create a partial index for the pages. Now here is the bug of not joining main thread after child processes have finished. So once all indexes have completed you will see that the CPU usage have decreased you can just terminate the program with `ctrl + c`.
 
-### Step 2: Comment the above part of the code and uncomment the 
+### Step 2: Comment the above part of the code and uncomment the following part:
 ```
 ## START: STAGE 2: Build index of index
 ...
