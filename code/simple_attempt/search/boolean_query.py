@@ -75,12 +75,12 @@ class BooleanQuery:
             if len(found_docs) == 5:
                 break
 
-        return found_docs
+        return found_docs, query_tokens
 
     
 if __name__ == '__main__':
     BQ = BooleanQuery()
-    found_docs = BQ.search('cristina lopes')
+    found_docs, query_tokens = BQ.search('cristina lopes')
 
     for url, tfidf in found_docs:
         print(f'{url}, tf-idf: {tfidf :.3f}')

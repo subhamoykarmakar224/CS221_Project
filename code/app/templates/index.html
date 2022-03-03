@@ -4,7 +4,7 @@
 <form method="post" id="prefix-form">
     <div class="input-group mt-3">
         <input type="search" autofocus class="form-control rounded" placeholder="Search" aria-label="Search"
-               aria-describedby="search-addon" name="searchterm" id="searchterm" value={{ prefix }} />
+               aria-describedby="search-addon" name="searchterm" id="searchterm" value="{{ prefix }}" />
         <button type="submit" class="btn btn-outline-primary">search</button>
     </div>
     <p class="text-danger">{{ error }}</p>
@@ -15,7 +15,7 @@
     <a href="{{ res['url'] }}" class="list-group-item list-group-item-action" aria-current="true">
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{ res['title'] }}</h5>
-            <small>Last Updated {{ res['last_updated'] }} days ago</small>
+            <small>TF-IDF: {{ res['score'] }}</small>
         </div>
         <p class="mb-1">{{ res['url'] }}</p>
         <small>{{ res['tags'] }}</small>
