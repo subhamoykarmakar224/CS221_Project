@@ -1,7 +1,12 @@
+from simple_attempt.search.boolean_query import BooleanQuery
+
 
 def get_data(prefix=''):
-    # TODO :: add logic to get data
-    res = [
-        {'title': 'Title 1', 'tags': '#tags1', 'last_updated': '1', 'url':'#'}
-    ]
+    BQ = BooleanQuery()
+    found_docs = BQ.search(prefix)
+
+    res = []
+    for i in range(len(found_docs)):
+        res.append({ 'title': i+1, 'tags': '', 'last_updated': '', 'url': found_docs[i][0] })
+
     return res
