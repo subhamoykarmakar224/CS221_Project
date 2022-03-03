@@ -57,9 +57,21 @@ class BooleanQuery:
         # output top 5 URLs sorted by tf-idf score
         found_docs = []
 
-        for docId in sorted(tf_idfs, key=lambda t: -tf_idfs[t]):
-            found_docs.append((self.aux_map[docId], tf_idfs[docId]))
+        for docId in sorted(tf_idfs, key = lambda t: -tf_idfs[t]):
 
+            append = True
+            for doc in found_docs:
+                # check to see if one url separated by / is encapsulated by another in the list
+                docsplit = set(doc[0].split("/"))
+                newdocsplit = set(self.aux_map[docId].split("/"))
+                if docsplit.issubset(newdocsplit) or newdocsplit.issubset(docsplit):
+                    append = False
+                    break
+            if self.aux_map[docId].endswith(".ff") or self.aux_map[docId].endswith("bib") or self.aux_map[docId].endswith("txt"):
+                append = False
+
+            if append:
+                found_docs.append((self.aux_map[docId], tf_idfs[docId]))
             if len(found_docs) == 5:
                 break
 
