@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request
 
-# from app.utils.Database import get_data
-from app.utils.boolean_query import get_search_res
-
+from app.utils.Database import get_data
 
 app = Flask(__name__)
 
@@ -17,19 +15,7 @@ def index():
         if prefix == '' or prefix == '/':
             error = 'Please enter a valid string to search'
         else:
-            data, query_tokens = get_search_res(prefix)
-            tag = ''
-            for q in query_tokens:
-                tag += ' #' + q
-
-            for url, tfidf in data:
-                res.append({
-                    'title': url,
-                    'tags': tag,
-                    'url': url,
-                    'score': tfidf
-                })
-                
+            res = get_data(prefix)
 
     return render_template('index.html', results=res, prefix=prefix, error=error)
 

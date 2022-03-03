@@ -8,16 +8,16 @@ from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 
 
-def get_search_res():
+if __name__ == '__main__':
     inverted_index = None
     aux_map = None
     document_frequencies = None
 
-    with open('./simple_attempt/indexer/pickles/auxiliary_map', 'rb') as aux_file:
+    with open('../indexer/pickles/auxiliary_map', 'rb') as aux_file:
         aux_map = pickle.load(aux_file, encoding="bytes")
     N = len(aux_map)
 
-    with open('./simple_attempt/indexer/pickles/inverted_index', 'rb') as index_file:
+    with open('../indexer/pickles/inverted_index', 'rb') as index_file:
         inverted_index = pickle.load(index_file, encoding="bytes")
 
     stop_list = set(stopwords.words('english'))
@@ -85,5 +85,4 @@ def get_search_res():
 
     for url, tfidf in found_docs:
         print(f'{url}, tf-idf: {tfidf :.3f}')
-    
-    return found_docs
+    print()

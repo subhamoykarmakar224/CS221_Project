@@ -13,7 +13,7 @@ def make_index():
     ps = PorterStemmer()
 
     # TODO: modify start directory as needed for your machines and/or change to DEV
-    start_directory = "../../ANALYST"
+    start_directory = "../../../../DEV"
 
     # structure of index is: {term : {docId :  frequency of term in doc} }
     # TODO: change to use the Posting class to store more metadata for each term
