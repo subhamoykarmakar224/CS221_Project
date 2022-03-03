@@ -8,7 +8,7 @@ from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 
 
-def get_search_res():
+def get_search_res(search_term):
     inverted_index = None
     aux_map = None
     document_frequencies = None
@@ -24,8 +24,7 @@ def get_search_res():
     ps = PorterStemmer()
 
     #query_tokens = word_tokenize(input("Search Query: "))
-    query_tokens = word_tokenize("cristina lopes")
-    print()
+    query_tokens = word_tokenize(search_term)
     query_tokens = [ps.stem(t) for t in query_tokens if (t not in stop_list and len(t) > 1)]
 
 
@@ -74,4 +73,4 @@ def get_search_res():
     for url, tfidf in found_docs:
         print(f'{url}, tf-idf: {tfidf :.3f}')
     
-    return found_docs
+    return (found_docs, query_tokens)

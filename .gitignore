@@ -133,3 +133,6 @@ dmypy.json
 
 code/indexer/auxMap_pickle
 code/indexer/index_pickle
+
+pickles/
+ANALYST/
