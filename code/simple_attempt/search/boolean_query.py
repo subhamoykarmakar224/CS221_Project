@@ -23,8 +23,8 @@ def get_search_res():
     stop_list = set(stopwords.words('english'))
     ps = PorterStemmer()
 
-    #query_tokens = word_tokenize(input("Search Query: "))
-    query_tokens = word_tokenize("cristina lopes")
+    query_tokens = word_tokenize(input("Search Query: "))
+    #query_tokens = word_tokenize("cristina lopes")
     print()
     query_tokens = [ps.stem(t) for t in query_tokens if (t not in stop_list and len(t) > 1)]
 
@@ -66,8 +66,20 @@ def get_search_res():
     found_docs = []
 
     for docId in sorted(tf_idfs, key = lambda t: -tf_idfs[t]):
-        found_docs.append((aux_map[docId], tf_idfs[docId]))
 
+        append = True
+        for doc in found_docs:
+            # check to see if one url separated by / is encapsulated by another in the list
+            docsplit = set(doc[0].split("/"))
+            newdocsplit = set(aux_map[docId].split("/"))
+            if docsplit.issubset(newdocsplit) or newdocsplit.issubset(docsplit):
+                append = False
+                break
+        if aux_map[docId].endswith(".ff") or aux_map[docId].endswith("bib") or aux_map[docId].endswith("txt"):
+            append = False
+
+        if append:
+            found_docs.append((aux_map[docId], tf_idfs[docId]))
         if len(found_docs) == 5:
             break
 
