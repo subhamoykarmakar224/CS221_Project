@@ -17,8 +17,8 @@
             <h5 class="mb-1">{{ res['title'] }}</h5>
             <small>Last Updated {{ res['last_updated'] }} days ago</small>
         </div>
-        <p class="mb-1">{{ res['tags'] }}</p>
-        <small>URL:://www.testurl.com{{ res['url'] }}</small>
+        <p class="mb-1">{{ res['url'] }}</p>
+        <small>{{ res['tags'] }}</small>
     </a>
     {% endfor %}
 </div>
