@@ -2,66 +2,101 @@ import math
 from fuzzywuzzy import fuzz
 
 
-def clean_data(prefix, data):
-    res = []
-    ln = len(prefix)
-    idfs = dict()
+# Class to aggregate all the fields we need to track
+class SearchResult:
+    def __init__(self, url, term, tfidf, query_token) -> None:
+        self.url = url
+        self.terms = [term]
+        self.tfidf = tfidf
+        self.query_tokens = [query_token]
 
-    seenUrls = set()
+        # scales down the weight of the string similarity between
+        # terms and query tokens to give more weight to tfidf
+        self.alpha = 2
 
-    for d in data:
-        try:
-            tmp = d.split('\t')
+    def similarity_ratio(self):
+        ratios = []
 
-            if len(tmp) < 4 or tmp[1] in seenUrls:
-                continue
+        for (term, query_token) in zip(self.terms, self.query_tokens):
+            ratios.append(fuzz.partial_ratio(term, query_token))
 
-            seenUrls.add(tmp[1])
+        return ratios
 
-            # track idfs to be used later
-            term = tmp[0]   
-            if term not in idfs:
-                idfs[term] = 0
-            idfs[term] += 1
+    def scaled_similarity(self):
+        return sum(self.similarity_ratio()) / self.alpha
 
-            # dist = anti_distance(tmp[0], prefix, ln)
 
-            tf = int(tmp[2])
+def clean_data(query_tokens, search_results):
+    results_by_token = dict()
 
-            res.append(
-                {
-                    'title': tmp[1],
-                    'tags': [term],
-                    'term': term,
-                    'url': tmp[1],
-                    'score': 1 + math.log(tf),
-                    'distance': fuzz.partial_ratio(prefix, term)
-                }
-            )
-            
-        except Exception as e:
-            print('ERROR: ', d)
-            print(e.args)
-
-    # using this hardcoded value for num documents indexed
+    # using this hardcoded value for number of documents indexed
     N = 55393
+    
 
-    for r in res:
-        # score is now equal to tf-idf
-        r['score'] *=  math.log(N / idfs[ r['term'] ])
+    # 1: Calculate all the tf-idfs for each found document for each query token
+    # Note: 'term' refers to a similar prefix found in the inverted index, for example:
+    # query token: 'cristina' --> term: 'critic'
+    for token in query_tokens:
+        results_by_token[token] = dict()
+        m = len(search_results[token])
+
+        for d in search_results[token]:
+            try:
+                tmp = d.split('\t')
+
+                url = tmp[1]
+
+                if len(tmp) < 4 or url in results_by_token[token]:
+                    continue
+
+                tf = 1 + math.log(int(tmp[2]))
+                idf = math.log(N / m)
+
+                results_by_token[token][url] = SearchResult(url, tmp[0], tf*idf, token)
         
-        # substract the lev distance from the tf-idf to compute total score
-        r['score'] -= r['distance']
+            except Exception as e:
+                print('ERROR: ', d)
+                print(e.args)
 
-        # round so the html displays properly
-        r['score'] = round(r['score'], 3)
 
+    # 2: only take documents that contained terms for ALL query tokens
+    intersection = results_by_token[query_tokens[0]].keys()
+    for i in range(len(query_tokens)):
+        intersection = intersection & results_by_token[query_tokens[i]].keys()
+
+
+    # 3. Aggregate the SearchResult objects by adding the terms, query_tokens, and tf-idfs for 
+    # each occurance of the document
+    results_by_url = dict()
+   
+    for token in query_tokens:
+
+        for url in intersection:
+
+            if url in results_by_token[token]:
+
+                if url not in results_by_url:
+                    results_by_url[url] = results_by_token[token][url]
+                else:
+                    results_by_url[url].terms += results_by_token[token][url].terms
+                    results_by_url[url].query_tokens += results_by_token[token][url].query_tokens
+                    results_by_url[url].tfidf += results_by_token[token][url].tfidf
+
+
+    # 4. Return results sorted by tf-idf + similarity of terms to query tokens
+    to_return = []
+    for url in sorted(results_by_url, key = lambda u: -(results_by_url[u].tfidf + results_by_url[u].scaled_similarity())):
+        to_return.append(  
+            {
+                'title': results_by_url[url].url,
+                'tags': results_by_url[url].terms,
+                'score': results_by_url[url].tfidf,
+                'distance': results_by_url[url].similarity_ratio()
+            }
+        )
 
     # res = sorted(res, key=lambda x: (x['tags'], 1.0/x['score']), reverse=False)
-
-    # sort by negative score --> higher score is better
-    res = sorted(res, key=lambda x: -x['score']) 
-    return res[:25]
+    return to_return[:25]
 
 
 def anti_distance(s1, s2, ln):

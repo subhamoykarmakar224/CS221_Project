@@ -9,7 +9,7 @@
     </div>
     <p class="text-danger">{{ error }}</p>
 </form>
-<p>Query Time: {{ qtime }}ms</p>
+<p>Query Time: {{ qtime }}s</p>
 
 <div class="list-group mt-3 mb-5">
     {% for res in results %}
@@ -17,7 +17,7 @@
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{ res['title'] }}</h5>
             <small>Score: {{ res['score'] }}</small>
-            <small>Lev Distance {{ res['distance'] }}</small>
+            <small>Similarity Ratios {{ res['distance'] }}</small>
         </div>
         <!-- <p class="mb-1">{{ res['tags'] }}</p> -->
         <small>{{ res['tags'] }}</small>
