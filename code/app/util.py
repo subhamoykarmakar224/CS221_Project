@@ -1,29 +1,66 @@
+import math
+from fuzzywuzzy import fuzz
+
+
 def clean_data(prefix, data):
     res = []
     ln = len(prefix)
+    idfs = dict()
+
+    seenUrls = set()
+
     for d in data:
         try:
             tmp = d.split('\t')
-            if len(tmp) < 4:
+
+            if len(tmp) < 4 or tmp[1] in seenUrls:
                 continue
-            # get similarity score
-            dist = anti_distance(tmp[0], prefix, ln)
-            tmp[2] = int(tmp[2])
+
+            seenUrls.add(tmp[1])
+
+            # track idfs to be used later
+            term = tmp[0]   
+            if term not in idfs:
+                idfs[term] = 0
+            idfs[term] += 1
+
+            # dist = anti_distance(tmp[0], prefix, ln)
+
+            tf = int(tmp[2])
+
             res.append(
                 {
                     'title': tmp[1],
-                    'tags': [tmp[0]],
+                    'tags': [term],
+                    'term': term,
                     'url': tmp[1],
-                    'score': tmp[2],
-                    'distance': dist
+                    'score': 1 + math.log(tf),
+                    'distance': fuzz.partial_ratio(prefix, term)
                 }
             )
+            
         except Exception as e:
             print('ERROR: ', d)
             print(e.args)
 
+    # using this hardcoded value for num documents indexed
+    N = 55393
+
+    for r in res:
+        # score is now equal to tf-idf
+        r['score'] *=  math.log(N / idfs[ r['term'] ])
+        
+        # substract the lev distance from the tf-idf to compute total score
+        r['score'] -= r['distance']
+
+        # round so the html displays properly
+        r['score'] = round(r['score'], 3)
+
+
     # res = sorted(res, key=lambda x: (x['tags'], 1.0/x['score']), reverse=False)
-    res = sorted(res, key=lambda x: (x['distance'], x['score']), reverse=True)
+
+    # sort by negative score --> higher score is better
+    res = sorted(res, key=lambda x: -x['score']) 
     return res[:25]
 
 

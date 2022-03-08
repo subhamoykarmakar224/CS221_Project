@@ -4,22 +4,23 @@
 <form method="post" id="prefix-form">
     <div class="input-group mt-3">
         <input type="search" autofocus class="form-control rounded" placeholder="Search" aria-label="Search"
-               aria-describedby="search-addon" name="searchterm" id="searchterm" value={{ prefix }} />
+               aria-describedby="search-addon" name="searchterm" id="searchterm" value="{{ prefix }}" />
         <button type="submit" class="btn btn-outline-primary">search</button>
     </div>
     <p class="text-danger">{{ error }}</p>
 </form>
-<p>Query Time: {{ qtime }}s</p>
+<p>Query Time: {{ qtime }}ms</p>
 
 <div class="list-group mt-3 mb-5">
     {% for res in results %}
     <a href="{{ res['url'] }}" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{ res['title'] }}</h5>
-            <small>Score {{ res['score'] }}</small>
+            <small>Score: {{ res['score'] }}</small>
+            <small>Lev Distance {{ res['distance'] }}</small>
         </div>
         <!-- <p class="mb-1">{{ res['tags'] }}</p> -->
-        <small>{{ res['url'] }}</small>
+        <small>{{ res['tags'] }}</small>
     </a>
     {% endfor %}
 </div>

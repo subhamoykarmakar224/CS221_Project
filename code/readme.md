@@ -38,3 +38,8 @@ Run `python indexer.py`. This would create a partial index for the pages. Now he
 Run `python indexer.py` again to merge the partial indexes and then create the index-of-index and the parallel cluster of custom trie datastructure.
 
 You can continue with Step 1. `/tmp` folder can be deleted but `/ioi`  and `/iclusters` is important for the search to run properly.
+
+
+### Dependencies
+pip install fuzzywuzzy
+pip install python-Levenshtein
