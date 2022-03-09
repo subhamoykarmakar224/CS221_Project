@@ -16,8 +16,8 @@ class NLP:
         word_tokens = word_tokenize(lines)
         word_count = dict()
         for i in range(len(word_tokens)):
-            word = word_tokens[i]
-            word = self.ps.stem(word.lower())
+            word = word_tokens[i].lower()
+            # word = self.ps.stem(word.lower())
             if word not in word_count:
                 word_count[word] = [0, []]
             word_count[word][0] += 1

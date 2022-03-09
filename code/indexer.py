@@ -103,22 +103,17 @@ class IndexerController:
         logging.info(f'Batch size: {self.BATCH_SIZE} files.')
         self.create_tmp_N_TMP_folders()
         file_data = dict()
-        # for i in range(0, len(self.file_list), self.BATCH_SIZE):
-        #     start = i
-        #     end = i + self.BATCH_SIZE
-        #     if end > len(self.file_list):
-        #         end = len(self.file_list)
-        #     file_data[i] = self.file_list[start:end]
+        for i in range(0, len(self.file_list), self.BATCH_SIZE):
+            start = i
+            end = i + self.BATCH_SIZE
+            if end > len(self.file_list):
+                end = len(self.file_list)
+            file_data[i] = self.file_list[start:end]
 
         # Start Parallel processing
-        # pool = multiprocessing.Pool(processes=self.N_WORKERS)
-        # pool.map(self._worker, file_data.items())
-        # pool.close() # no more tasks
-        # pool.join()  # wrap up current tasks
-
-        with multiprocessing.Pool(processes=self.N_WORKERS) as p:
-            p.map_async(self._worker, self.file_list, chunksize=self.BATCH_SIZE)
-
+        pool = multiprocessing.Pool(processes=self.N_WORKERS)
+        pool.map(self._worker, file_data.items())
+        
         # TODO :: Delete this later: for testing purpose only
         # self._worker((0, file_data[0]))
 
@@ -157,21 +152,21 @@ if __name__ == '__main__':
     url_analyst = '../dataset/ANALYST/'
     url_dev = '../dataset/DEV/'
 
-    ## START: STAGE 1: Build initial index
+    # START: STAGE 1: Build initial index
     # Clean up old indexed files
     # clean_up_tmp()
     # clean_up_iclusters()
     # clean_up_ioi()
 
     # Get list of files and URLs
-    # file_list = get_list_of_files(url_dev)
+    # file_list = get_list_of_files(url_analyst)
     # print(f'Found {len(file_list)} files to index')
     # logging.info(f'Found {len(file_list)} files to index')
 
     # Create Index to form 3 clusters
     # indexer = IndexerController(file_list)
     # indexer.controller()
-    ## END: STAGE 1: Build initial index
+    # END: STAGE 1: Build initial index
 
     ## START: STAGE 2: Build index of index
     # Merge Index to form 3 clusters
