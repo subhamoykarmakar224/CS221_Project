@@ -11,8 +11,6 @@ class TrieNode:
 
 class TrieController:
     def __init__(self, pickle_name):
-        # self = self.load_root_trie_pickle()
-        # self.root = self.root
         self.root = TrieNode()
         self.pickle_name = pickle_name
 
@@ -26,7 +24,7 @@ class TrieController:
                 cur.start_offset = offset
             cur.end_offset = max(cur.end_offset, offset)
 
-            if depth == 5:
+            if depth == 10:
                 break
 
             cur = cur.children[c]
