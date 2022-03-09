@@ -13,13 +13,14 @@
 
 <div class="list-group mt-3 mb-5">
     {% for res in results %}
-    <a href="{{ res['url'] }}" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
+    <a href="{{ res['title'] }}" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">{{ res['title'] }}</h5>
-            <small>Score {{ res['score'] }}</small>
+            <small>Score: {{ res['score'] }}</small>
+            <small>Similarity Ratios {{ res['distance'] }}</small>
         </div>
         <!-- <p class="mb-1">{{ res['tags'] }}</p> -->
-        <small>{{ res['url'] }}</small>
+        <small>{{ res['tags'] }}</small>
     </a>
     {% endfor %}
 </div>
