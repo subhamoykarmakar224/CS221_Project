@@ -21,6 +21,7 @@ class SearchResult:
 
         # how large of a window to search for nearby terms in the doc
         self.WINDOW_SIZE = 5
+        self.POSITION_WEIGHT = 3
 
     def similarity_ratio(self):
         ratios = []
@@ -34,6 +35,11 @@ class SearchResult:
         return sum(self.similarity_ratio()) * self.SIMILARITY_WEIGHT
 
     def position_score(self, query_tokens_by_pos):
+        # if single term query, return 0
+        if len(query_tokens_by_pos) < 2:
+            return 0
+
+        # positions = [(term1, pos), (term2, pos), ...] sorted by pos
         self.positions = sorted(self.positions, key = lambda t: t[1])
         adjacent_word_cnt = 0
 
@@ -47,11 +53,13 @@ class SearchResult:
                 pos_i = self.positions[i][1]
                 pos_j = self.positions[i+1][1]
 
+                # if word_i appears before word_j in the query AND the distance
+                # between them in the doc is less than window
                 if query_tokens_by_pos[word_i] < query_tokens_by_pos[word_j] \
-                    and (pos_j - pos_i) <= window:
+                    and (pos_j - pos_i) < window:
                     adjacent_word_cnt += 1
 
-        return adjacent_word_cnt
+        return adjacent_word_cnt * self.POSITION_WEIGHT
 
 
 def clean_data(query_tokens, search_results):
@@ -96,8 +104,8 @@ def clean_data(query_tokens, search_results):
         intersection = intersection & results_by_token[query_tokens[i]].keys()
 
 
-    # 3. Aggregate the SearchResult objects by adding the terms, query_tokens, and tf-idfs for 
-    # each occurance of the document
+    # 3. Aggregate the SearchResult objects by adding the terms, query_tokens, position of terms, 
+    # and tf-idfs for each occurance of the document
     results_by_url = dict()
    
     for token in query_tokens:
@@ -115,15 +123,16 @@ def clean_data(query_tokens, search_results):
                     results_by_url[url].positions += results_by_token[token][url].positions
 
 
-    # 4. Return results sorted by tf-idf + similarity of terms to query tokens
+    # 4. Return results sorted by (tf-idf + similarity of terms to query tokens + number of adjacent terms)
     query_tokens_by_position = {query_tokens[i]: i for i in range(len(query_tokens))}
     to_return = []
 
-    for url in sorted(results_by_url, key = lambda u: -(results_by_url[u].tfidf + results_by_url[u].scaled_similarity())):  
-        res = results_by_url[url]
-
-        print(res.position_score(query_tokens_by_position))
-        
+    for url in sorted(results_by_url, key = lambda u: - (
+        results_by_url[u].tfidf 
+        + results_by_url[u].scaled_similarity() 
+        + results_by_url[u].position_score(query_tokens_by_position)
+    )):
+        res = results_by_url[url]        
         to_return.append(  
             {
                 'title': res.url,
