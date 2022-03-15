@@ -19,7 +19,8 @@ class TrieLoader:
         cur = self.root
         for c in prefix:
             if c not in cur.children:
-                break
+                #break
+                return (None, None)
             start_offset = cur.start_offset
             end_offset = cur.end_offset
             cur = cur.children[c]

@@ -40,26 +40,33 @@ class GetData:
                 prefix_2d = prefix[:2]
             else:
                 prefix_2d = prefix
+            #prefix_2d = prefix
 
             for i in range(len(self.search_index)):
                 trie_loader = self.search_index[i]
                 start_off, end_off = trie_loader.search_prefix(prefix)
-                index_2d_url = os.path.join(
-                    '.', 'Indexer', 'iclusters', 'cluster-' + str(i))
-                if not os.path.isfile(os.path.join(index_2d_url, prefix_2d + '.txt')):
-                    continue
-                tmp = []
-                cnt = 0
-                with open(os.path.join(index_2d_url, prefix_2d + '.txt'), 'r', encoding='utf-8') as f:
-                    f.seek(start_off)
-                    while f.tell() <= end_off or cnt != 30:
-                        ln = f.readline()
-                        if len(ln) == 0:
-                            break
-                        tmp.append(f.readline())
-                        cnt += 1
-
-                search_result[prefix] += tmp
+                if start_off != None and end_off != None:
+                    index_2d_url = os.path.join(
+                        '.', 'Indexer', 'iclusters', 'cluster-' + str(i))
+                    if not os.path.isfile(os.path.join(index_2d_url, prefix_2d + '.txt')):
+                        continue
+                    tmp = []
+                    cnt = 0
+                    print("start: ", start_off)
+                    print("end: ", end_off)
+                    with open(os.path.join(index_2d_url, prefix_2d + '.txt'), 'r', encoding='utf-8') as f:
+                        print("file: ", f)
+                        f.seek(start_off)
+                        #while f.tell() <= end_off or cnt != 30:
+                        while f.tell() <= end_off:
+                            ln = f.readline()
+                            if len(ln) == 0:
+                                break
+                            assert ln.split("\t")[0] == prefix, "failure: " + ln
+                            tmp.append(ln)
+                            cnt += 1
+                    print(tmp)
+                    search_result[prefix] += tmp
 
         search_result = clean_data(query_tokens, search_result)
 

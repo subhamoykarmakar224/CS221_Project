@@ -150,32 +150,32 @@ def clean_up_ioi():
 # Start Indexer
 if __name__ == '__main__':
     url_analyst = '../dataset/ANALYST/'
-    url_dev = '../dataset/DEV/'
+    url_dev = '../DEV/'
 
-    # START: STAGE 1: Build initial index
-    # # Clean up old indexed files
+    #START: STAGE 1: Build initial index
+    # Clean up old indexed files
     # clean_up_tmp()
     # clean_up_iclusters()
     # clean_up_ioi()
     
-    # Get list of files and URLs
+    #Get list of files and URLs
     # file_list = get_list_of_files(url_dev)
     # print(f'Found {len(file_list)} files to index')
     # logging.info(f'Found {len(file_list)} files to index')
 
-    # # Create Index to form 3 clusters
+    # Create Index to form 3 clusters
     # indexer = IndexerController(file_list)
     # indexer.controller()
-    # END: STAGE 1: Build initial index
+    #END: STAGE 1: Build initial index
 
-    # # START: STAGE 2: Build index of index
-    # # Merge Index to form 3 clusters
+    # START: STAGE 2: Build index of index
+    # Merge Index to form 3 clusters
     # m = IndexMerger(logging)
     # m.controller()
 
-    # iofi = ConstructL2Index(logging)
-    # iofi.sort_cluster_controller()
-    # iofi.create_ioi_controller()
-    # # END: STAGE 2: Build index of index
+    iofi = ConstructL2Index(logging)
+    iofi.sort_cluster_controller()
+    iofi.create_ioi_controller()
+    # END: STAGE 2: Build index of index
 
     print(f'Done.')

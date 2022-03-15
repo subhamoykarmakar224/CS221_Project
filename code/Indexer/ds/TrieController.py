@@ -22,7 +22,9 @@ class TrieController:
             if c not in cur.children:
                 cur.children[c] = TrieNode()
                 cur.start_offset = offset
-            cur.end_offset = max(cur.end_offset, offset)
+                cur.end_offset = offset
+            if c == word[-1]:
+                cur.end_offset = max(cur.end_offset, offset)
 
             if depth == 10:
                 break
