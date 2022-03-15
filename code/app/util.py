@@ -4,24 +4,24 @@ from fuzzywuzzy import fuzz
 
 # Class to aggregate all the fields we need to track
 class SearchResult:
-    def __init__(self, url, term, tfidf, query_token, positions) -> None:
+    def __init__(self, url, term, tfidf, query_token, positions=None) -> None:
         self.url = url
         self.terms = [term]
         self.tfidf = tfidf
         self.query_tokens = [query_token]
-        self.positions = []
+        # self.positions = []
         
         # list of (query token, position of term mapped to that query token in the doc) 
-        for p in positions:
-            self.positions.append( (query_token, p) )
+        # for p in positions:
+        #     self.positions.append( (query_token, p) )
 
         # scales down the weight of the string similarity between
         # terms and query tokens to give more weight to tfidf
         self.SIMILARITY_WEIGHT = 0.5
 
         # how large of a window to search for nearby terms in the doc
-        self.WINDOW_SIZE = 5
-        self.POSITION_WEIGHT = 3
+        # self.WINDOW_SIZE = 5
+        # self.POSITION_WEIGHT = 3
 
     def similarity_ratio(self):
         ratios = []
@@ -88,10 +88,10 @@ def clean_data(query_tokens, search_results):
                 tf = 1 + math.log(int(tmp[2]))
                 idf = math.log(N / m)
 
-                positions = tmp[3][1:-1].split(',')
-                positions = [int(p) for p in positions]
+                # positions = tmp[3][1:-1].split(',')
+                # positions = [int(p) for p in positions]
 
-                results_by_token[token][url] = SearchResult(url, tmp[0], tf*idf, token, positions)
+                results_by_token[token][url] = SearchResult(url, tmp[0], tf*idf, token)
         
             except Exception as e:
                 print('ERROR: ', d)
@@ -120,17 +120,17 @@ def clean_data(query_tokens, search_results):
                     results_by_url[url].terms += results_by_token[token][url].terms
                     results_by_url[url].query_tokens += results_by_token[token][url].query_tokens
                     results_by_url[url].tfidf += results_by_token[token][url].tfidf
-                    results_by_url[url].positions += results_by_token[token][url].positions
+                    # results_by_url[url].positions += results_by_token[token][url].positions
 
 
     # 4. Return results sorted by (tf-idf + similarity of terms to query tokens + number of adjacent terms)
-    query_tokens_by_position = {query_tokens[i]: i for i in range(len(query_tokens))}
+    # query_tokens_by_position = {query_tokens[i]: i for i in range(len(query_tokens))}
     to_return = []
 
     for url in sorted(results_by_url, key = lambda u: - (
         results_by_url[u].tfidf 
         + results_by_url[u].scaled_similarity() 
-        + results_by_url[u].position_score(query_tokens_by_position)
+        # + results_by_url[u].position_score(query_tokens_by_position)
     )):
         res = results_by_url[url]        
         to_return.append(  
