@@ -1,4 +1,3 @@
-# CS221 - Project
+# CS221 - Search Engine Project
 
-## Part 1: Text Processing
 
